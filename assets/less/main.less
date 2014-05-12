@@ -7,13 +7,18 @@ body {
   margin          : 0px;
   -dyn-width      : '@win-width';
   -dyn-height     : '@win-height';
+  font-family     : 'Exo 2';
 }
 
 .content {
 	display: inline-block;
-	width: 80%;
-	// box-sizing: border-box;
+	width: 40%;
+	box-sizing: border-box;
 }
+
+@pos      : '(@jq-position.top)';
+@cur      : '@win-scrollTop';
+@distance : '(@{cur} - @{pos})';
 
 .common-style() {
 	display          : block;
@@ -26,7 +31,7 @@ body {
 	width            : 100%;
 	-dyn-margin-top  : '(@win-height - @el-height)/2.0';
 	-dyn-margin-left : '(@win-width - @el-width)/2.0';
-	-dyn-opacity     : '@shouldAppear({when: @win-scrollTop, isHigherThan : (@jq-offset).top + (@win-height - @el-height)/3.0})';
+	-dyn-opacity  : '@shouldDisappear({when : @{distance}, isHigherThan : @win-height/2})'
 }
 
 .content__page1 {
@@ -48,5 +53,10 @@ body {
 
 .page1__header, .page2__header, .page3__header, .page4__header {
 	font-size: 3em;
-	font-weight: 200;
+	font-weight: 300;
+}
+
+.page1__sub, .page2__sub, .page3__sub, .page4__sub {
+	font-size: 1.5em;
+	font-weight: 100;
 }
