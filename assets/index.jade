@@ -8,38 +8,62 @@ html
 		meta(name="viewport", content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0")
 		// if lt IE 9
 			script(type="text/javascript", src="js/html5shiv.js")
+		link(href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css", rel="stylesheet")
 		link(rel="stylesheet", href="css/client.css", type="text/css")
 		//- link(rel="stylesheet", href="//fonts.googleapis.com/css?family=Exo+2:400,500,300", type="text/css")
 	body
 
 		.position-spy
-			.position-spy__page1
-			.position-spy__page2
-			.position-spy__page3 
-			.position-spy__page4
+			.position-spy__page1(onclick="location.href='';", style="cursor: pointer;")
+			.position-spy__page2(onclick="location.href='#feature1';", style="cursor: pointer;")
+			.position-spy__page3(onclick="location.href='#feature2';", style="cursor: pointer;")
+			.position-spy__page4(onclick="location.href='#feature-connect';", style="cursor: pointer;")
 
 		.content
-			.content__page1
-				.page1__header Your Awesome Product
+			#headline.content__page1
+				.page1__icon
+					i.fa-html5.fa
+				.page1__header Your Awesome App
 				.page1__sub In your awesome landing page
-			.content__page2
+			#feature1.content__page2
 				.page2__header Feature one
-				.page2__sub You cannot live without it
-			.content__page3
+				.page2__sub We know you can't live without it, so we created it
+			#feature2.content__page3
 				.page3__header Feature Two
-				.page3__sub Essential
-			.content__page4
+				.page3__sub Trust us, this is going to be huge!
+			#feature-connect.content__page4
 				.page4__header Keep in touch
+				.page4__sub Leave your email. We'll let you know ahead of time when we will release it 
 				.page4__form
-					input.page4__form__mail
-					button.page4__form__submit 
+					input.page4__form__email
+					.page4__form__button-go OK
 
-		.phone
-			.phone__page1
-			.phone__page2
+		.phone-preview
+			.phone-preview__chevron-container
+				i.phone-preview__chevron.fa.fa-chevron-down.blink_me
 			img.phone-preview__phone(src='img/phone.png')
+			i.phone-preview__music-display.fa.fa-music
+			i.phone-preview__soundcloud.fa.fa-star
+
+		.footer 
+			.footer__container
+				.footer__createdby Vittorio Zaccaria — 2014
+				.footer__share_section
+					.footer__share_twitter 
+						a#here-twitter(href="https://twitter.com/share",class="twitter-share-button",data-count='vertical', data-via="_vzaccaria_") Tweet
+					.footer__share_reddit 
+						#here-reddit
+					.footer__google_track
+						#here-google
+
+ 
+				
 
 
 		script(type="text/javascript", src="js/vendor.js")
+		script(type="text/javascript", src="js/client.js")
+		script.
+			window.dynCss.api.setBreakpoints([961],'@win-width');
+
 		// if IE
 			script(type="text/javascript", src="js/placeholder.js")

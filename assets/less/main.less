@@ -1,5 +1,81 @@
 
-@import url(http://fonts.googleapis.com/css?family=Exo+2:400,100,200,300,500);
+@import url(http://fonts.googleapis.com/css?family=Lato:400,100,200,300,500);
+@import url(http://fonts.googleapis.com/css?family=Francois+One);
+
+@page1-start: '@pos(".content__page1").top';
+@page2-start: '@pos(".content__page2").top';
+@page3-start: '@pos(".content__page3").top';
+@page4-start: '@pos(".content__page4").top';
+
+@trans1-limits: 'start: 0                                 , stop: @{page2-start}'; // Move to position
+@trans2-limits: 'start: @{page2-start} + @win-height * .1 , stop: @{page3-start}'; // Rotate
+@trans3-limits: 'start: @{page3-start} + @win-height * .1 , stop: @{page4-start} - @win-height/2'; // Fade out
+
+@animationStatus1: '@transitionToOne({when : @win-scrollTop , @{trans1-limits} }, .5)';
+@animationStatus2: '@transitionToOne({when : @win-scrollTop , @{trans2-limits} }, 1)';
+@animationStatus3: '@transitionToOne({when : @win-scrollTop , @{trans3-limits} }, 1)';
+
+@convergeHorizontally : '@morph(@{animationStatus1} , @fixedRightEdge(".content__page1") , @fixedHorizontalCenter(window))';
+@convergeVertically   : '@morph(@{animationStatus1} , @win-height + 100                  , @fixedVerticalCenter(window))';
+
+@fromPortraitToLandscape: '"rotate(#{@morph(@{animationStatus2}, 0, 270)}deg) "';
+
+
+.phone-preview__chevron {
+	position                     : fixed;
+	-dyn-fixed-bottom-edge       : '@fixedTopEdge(".phone-preview__phone")';
+	-dyn-fixed-horizontal-center : '@fixedRightEdge(".content__page1")';
+	color                        : white;
+	font-size                    : 5em;
+}
+
+.phone-preview__chevron-container {
+	-dyn-opacity                 : '1-@{animationStatus1}';
+}
+
+.position-spy {
+	position                     : fixed;
+	-dyn-display                 : '@selectFrom(["none", "block"])';
+	box-sizing                   : border-box;
+	-dyn-fixed-vertical-center   : '@fixedVerticalCenter(window)';
+	-dyn-fixed-horizontal-center : '@pos(".content__page1").left';
+	// -dyn-opacity              : '@{animationStatus1}';
+}
+
+
+
+
+.phone-preview__music-display {
+	position                     : fixed;
+	-dyn-fixed-vertical-center   : '@fixedVerticalCenter(".phone-preview__phone")';
+	-dyn-fixed-horizontal-center : '@fixedHorizontalCenter(".phone-preview__phone")';
+	color                        : white;
+	font-size                    : 6em;
+	-dyn-opacity                 : '@if(@{animationStatus2} > 0, 0, 1)';
+}
+
+.phone-preview__soundcloud {
+	position                     : fixed;
+	-dyn-fixed-vertical-center   : '@fixedVerticalCenter(window)';
+	-dyn-fixed-horizontal-center : '@fixedHorizontalCenter(window)';
+	color                        : white;
+	font-size                    : 6em;
+	-dyn-opacity                 : '@if(@{animationStatus3} < 1 && @{animationStatus2} >= 1, 1, 0)';
+}
+
+.phone-preview__phone {
+  position                     : fixed;
+  width                        : 20%;
+  height                       : auto;
+  -dyn-fixed-vertical-center   : '@{convergeVertically}';
+  -dyn-fixed-horizontal-center : '@{convergeHorizontally}';
+  -dyn-transform               : '@{fromPortraitToLandscape}';
+  -dyn-opacity                 : '1-@{animationStatus3}';
+  -dyn-display                 : '@if(@{animationStatus3} < 0.9, "", "none")';
+  z-index: -100;
+}
+
+
 
 body {
   background      : url(../img/background.jpg) no-repeat center center fixed;
@@ -7,56 +83,298 @@ body {
   margin          : 0px;
   -dyn-width      : '@win-width';
   -dyn-height     : '@win-height';
-  font-family     : 'Exo 2';
+  font-family     : 'Lato', 'Helvetica', 'Arial';
 }
 
 .content {
-	display: inline-block;
-	width: 40%;
-	box-sizing: border-box;
+	display    : inline-block;
+	width      : 60%;
+	box-sizing : border-box;
 }
 
-@pos      : '(@jq-position.top)';
-@cur      : '@win-scrollTop';
-@distance : '(@{cur} - @{pos})';
+@pos               : '(@jq-position.top)';
+@cur               : '@win-scrollTop';
+@distance-from-top : '(@{cur} - @{pos})';
 
-.common-style() {
+
+.content__common-style() {
 	display          : block;
 	box-sizing       : border-box;
 	padding          : 3em;
-	background-color : fade(black, 30%);
 	text-align       : left;
 	color            : white;
 	border-radius    : .5em;
 	width            : 100%;
-	-dyn-margin-top  : '(@win-height - @el-height)/2.0';
-	-dyn-margin-left : '(@win-width - @el-width)/2.0';
-	-dyn-opacity  : '@shouldDisappear({when : @{distance}, isHigherThan : @win-height/2})'
 }
 
 .content__page1 {
-	.common-style();
+	.content__common-style();
+	-dyn-margin-top     : '(@win-height - @el-height)/2.0';
+	-dyn-margin-left    : '(@win-width - @el-width)/2.0';
+	-dyn-opacity  		: '@convergeToZero({when : @{distance-from-top}, isHigherThan : @win-height/2})';
 }
 
-.content__page2 {
-	.common-style();
+.content__page2,
+.content__page3,
+.content__page4 {
+	.content__common-style();
+	-dyn-margin-top     : '(@win-height - @el-height)';
+	-dyn-margin-left    : '(@win-width - @el-width)/2.0';
 }
 
-.content__page3 {
-	.common-style();
+.smallcaps (@color, @font-weight) {
+    font-variant   : small-caps;
+    font-weight    : @font-weight;
+    text-transform : lowercase;
+    color          : @color;
 }
 
 .content__page4 {
-	.common-style();
-	// -dyn-margin-bottom: '(@win-height - @el-height)/2';
+	margin-bottom: 30%;
 }
 
-.page1__header, .page2__header, .page3__header, .page4__header {
-	font-size: 3em;
-	font-weight: 300;
+.content__page2 {
+	background-color: fade(black, 30%);
+	width: 80%;
 }
 
-.page1__sub, .page2__sub, .page3__sub, .page4__sub {
-	font-size: 1.5em;
-	font-weight: 100;
+// 	    ____                 __                       
+// 	   / __/________  ____  / /_____  ____ _____ ____ 
+// 	  / /_/ ___/ __ \/ __ \/ __/ __ \/ __ `/ __ `/ _ \
+// 	 / __/ /  / /_/ / / / / /_/ /_/ / /_/ / /_/ /  __/
+// 	/_/ /_/   \____/_/ /_/\__/ .___/\__,_/\__, /\___/ 
+// 	                        /_/          /____/       
+
+.page1__icon {
+	font-size: 5em;
+	padding-bottom: .3em;
+	text-align: center;
 }
+
+.page1__header {
+	text-align: center;
+	-dyn-font-size: '@selectFrom(["2em", "5em"])';
+	font-family: 'Francois One', 'Helvetica';
+}
+
+.page1__sub {	
+	.smallcaps(white, 300);
+	font-size   : 1.5em;
+	font-weight : 300;
+	letter-spacing: 6.5px;
+	text-align: center;
+}
+
+// 	         __  __                                            
+// 	  ____  / /_/ /_  ___  _____   ____  ____ _____ ____  _____
+// 	 / __ \/ __/ __ \/ _ \/ ___/  / __ \/ __ `/ __ `/ _ \/ ___/
+// 	/ /_/ / /_/ / / /  __/ /     / /_/ / /_/ / /_/ /  __(__  ) 
+// 	\____/\__/_/ /_/\___/_/     / .___/\__,_/\__, /\___/____/  
+// 	                           /_/          /____/             
+.page2__header, 
+.page3__header, 
+.page4__header {
+	text-align  : center;
+	padding-top : 1em;
+	font-size   : 3em;
+	font-weight : 500;
+}
+
+.page2__sub, 
+.page3__sub, 
+.page4__sub {
+	text-align  : center;
+	font-size   : 1.5em;
+	font-weight : 300;
+}
+
+// 	    _____             __   ____                   
+// 	   / __(_)___  ____ _/ /  / __/___  _________ ___ 
+// 	  / /_/ / __ \/ __ `/ /  / /_/ __ \/ ___/ __ `__ \
+// 	 / __/ / / / / /_/ / /  / __/ /_/ / /  / / / / / /
+// 	/_/ /_/_/ /_/\__,_/_/  /_/  \____/_/  /_/ /_/ /_/ 
+// 	                                                  
+
+@blue: #009DEC;
+@green: #3EAB3F;
+
+.page4__form {
+	display          : inline-block;
+	box-sizing       : border-box;
+	width: 70%;
+	margin-left: 15%;
+	margin-top: 2em;
+}
+
+@height: 100;
+
+.page4__form__email {
+
+	float       : left;
+	font-size   : 3em;
+	display     : inline-block;
+	box-sizing  : border-box;
+	border      : 3px solid white;
+	font-family : 'Lato';
+	width       : 70%;
+
+	&:focus {
+		border-left: 3px solid @blue;
+		outline: 0;
+	}
+}
+
+.page4__form__button-go {
+
+	float            : right;
+	width            : 20%;
+	height           : @height;
+	font-size        : 1.5em;
+	display          : block;
+	padding          : .8em;
+	text-align       : center;
+	background       : @blue;
+	// border-radius : 3px;
+	color            : white;
+
+
+	&:hover {
+		background: darken(@blue, 5%)
+	}
+}
+
+// 	               _          
+// 	   _________  (_)__  _____
+// 	  / ___/ __ \/ / _ \/ ___/
+// 	 (__  ) /_/ / /  __(__  ) 
+// 	/____/ .___/_/\___/____/  
+// 	    /_/                   
+
+@radius: 1;
+
+.position-spy__common() {
+	content          : "";
+	display          : block;
+	width            : @radius*2em;
+	height           : @radius*2em;
+	margin-top       : 2em;
+	left             : 0;
+
+	background-color : fade(black, 10%);
+	box-shadow       : inset 0px 2px 3px 0px rgba(0, 0, 0, .3), 
+						0px 1px 0px 0px rgba(255, 255, 255, .8);
+	border-radius    : @radius*1em;
+
+	&.highlight {
+	background-color : white;
+	border-color     : fade(black, 80%);
+	transition: 500ms;
+	}
+}
+
+.position-spy__page1,
+.position-spy__page2,
+.position-spy__page3,
+.position-spy__page4 {
+	.position-spy__common();
+}
+
+.position-spy__page1 {
+	-dyn-set-state-highlight: '@if(@{animationStatus1} < 0.9, true, false)';
+}
+
+.position-spy__page2 {
+	-dyn-set-state-highlight: '@if(@{animationStatus2} < 0.9 && @{animationStatus1} > 0.9, true, false)';
+}
+
+.position-spy__page3 {
+	-dyn-set-state-highlight: '@if(@{animationStatus3} < 0.9 && @{animationStatus2} > 0.9, true, false)';
+}
+
+.position-spy__page4 {
+	-dyn-set-state-highlight: '@if(@{animationStatus3} > 0.9, true, false)';
+}
+
+// 	    ____            __           
+// 	   / __/___  ____  / /____  _____
+// 	  / /_/ __ \/ __ \/ __/ _ \/ ___/
+// 	 / __/ /_/ / /_/ / /_/  __/ /    
+// 	/_/  \____/\____/\__/\___/_/     
+// 	                                 
+
+.footer {
+	padding-top: 2em;
+	background-color: white;
+	padding-bottom: 2em;
+}
+
+.footer__container {
+	text-align: center;
+
+}
+
+.footer__createdby {
+	.smallcaps(black, 300);
+
+	font-size: 2em;
+	padding-bottom: .5em;
+}
+
+.footer__share_section {
+	width: 50%;
+	margin-left: 25%;
+	display: block;
+}
+
+.footer__share_twitter,
+.footer__share_reddit {
+	width: 30%;
+	display: inline-block;
+}
+
+.footer__createdby:before {
+	content: 'created by ';
+	
+}
+
+// 	    __    ___       __      
+// 	   / /_  / (_)___  / /__    
+// 	  / __ \/ / / __ \/ //_/    
+// 	 / /_/ / / / / / / ,<       
+// 	/_.___/_/_/_/ /_/_/|_|      
+// 	                            
+.blink_me {
+    -webkit-animation-name            : blinker;
+    -webkit-animation-duration        : 1s;
+    -webkit-animation-timing-function : linear;
+    -webkit-animation-iteration-count : 10;
+
+    -moz-animation-name            : blinker;
+    -moz-animation-duration        : 1s;
+    -moz-animation-timing-function : linear;
+    -moz-animation-iteration-count : 10;
+
+    animation-name            : blinker;
+    animation-duration        : 1s;
+    animation-timing-function : linear;
+    animation-iteration-count : 10;
+}
+
+@-moz-keyframes blinker {  
+    0% { opacity: 1.0; }
+    50% { opacity: 0.0; }
+    100% { opacity: 1.0; }
+}
+
+@-webkit-keyframes blinker {  
+    0% { opacity: 1.0; }
+    50% { opacity: 0.0; }
+    100% { opacity: 1.0; }
+}
+
+@keyframes blinker {  
+    0% { opacity: 1.0; }
+    50% { opacity: 0.0; }
+    100% { opacity: 1.0; }
+}
+

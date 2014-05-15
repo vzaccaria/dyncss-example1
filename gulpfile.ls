@@ -5,7 +5,7 @@
  
 client-js = [ "#destination/js/build/#s" for s in client-brfy-roots ]
 
-files-to-watch = client-ls ++ client-less ++ client-html ++ directives ++ other-deps
+files-to-watch = client-ls ++ client-less ++ client-html ++ directives ++ other-deps ++ "#img-dir/*.jpg" ++ "#img-dir/*.png" ++ vendor-js ++ vendor-css ++ data-to-be-copied
 
 force-file-reload = [
     "#destination/**/*.html"
@@ -161,7 +161,6 @@ gulp.task 'watch-build', ->
   startExpress();
   startLivereload();
   gulp.watch(force-file-reload, notifyLivereload);
-  files-to-watch = client-ls ++ client-less ++ client-html ++ directives ++ other-deps
   gulp.watch(files-to-watch, ["default"])
 
 
