@@ -7,6 +7,11 @@
 @page3-start: '@pos(".content__page3").top';
 @page4-start: '@pos(".content__page4").top';
 
+@page1-left: '@pos(".content__page1").left';
+@page2-left: '@pos(".content__page2").left';
+@page3-left: '@pos(".content__page3").left';
+@page4-left: '@pos(".content__page4").left';
+
 @trans1-limits: 'start: 0                                 , stop: @{page2-start}'; // Move to position
 @trans2-limits: 'start: @{page2-start} + @win-height * .1 , stop: @{page3-start}'; // Rotate
 @trans3-limits: 'start: @{page3-start} + @win-height * .1 , stop: @{page4-start} - @win-height/2'; // Fade out
@@ -15,32 +20,34 @@
 @animationStatus2: '@transitionToOne({when : @win-scrollTop , @{trans2-limits} }, 1)';
 @animationStatus3: '@transitionToOne({when : @win-scrollTop , @{trans3-limits} }, 1)';
 
-@convergeHorizontally : '@morph(@{animationStatus1} , @fixedRightEdge(".content__page1") , @fixedHorizontalCenter(window))';
-@convergeVertically   : '@morph(@{animationStatus1} , @win-height + 100                  , @fixedVerticalCenter(window))';
+@convergeHorizontally : '@morph(@{animationStatus1} , @win-width*3/4    , @fixedHorizontalCenter(window))';
+@convergeVertically   : '@morph(@{animationStatus1} , @win-height + 100 , @fixedVerticalCenter(window))';
 
 @fromPortraitToLandscape: '"rotate(#{@morph(@{animationStatus2}, 0, 270)}deg) "';
-
-
-.phone-preview__chevron {
-	position                     : fixed;
-	-dyn-fixed-bottom-edge       : '@fixedTopEdge(".phone-preview__phone")';
-	-dyn-fixed-horizontal-center : '@fixedRightEdge(".content__page1")';
-	color                        : white;
-	font-size                    : 5em;
-}
-
-.phone-preview__chevron-container {
-	-dyn-opacity                 : '1-@{animationStatus1}';
-}
 
 .position-spy {
 	position                     : fixed;
 	-dyn-display                 : '@selectFrom(["none", "block"])';
 	box-sizing                   : border-box;
 	-dyn-fixed-vertical-center   : '@fixedVerticalCenter(window)';
-	-dyn-fixed-horizontal-center : '@pos(".content__page1").left';
+	-dyn-fixed-horizontal-center : '@win-width/6';
 	// -dyn-opacity              : '@{animationStatus1}';
 }
+
+
+.phone-preview__chevron {
+	position                     : fixed;
+	-dyn-fixed-bottom-edge       : '@fixedTopEdge(".phone-preview__phone")';
+	-dyn-fixed-horizontal-center : '@fixedHorizontalCenter(".phone-preview__phone")';
+	color                        : white;
+	font-size                    : 5em;
+	-dyn-display                 : '@selectFrom(["none", "block"])';
+}
+
+.phone-preview__chevron-container {
+	-dyn-opacity                 : '1-@{animationStatus1}';
+}
+
 
 
 
@@ -87,9 +94,13 @@ body {
 }
 
 .content {
-	display    : inline-block;
-	width      : 60%;
-	box-sizing : border-box;
+	// -dyn-width       : '@selectFrom(["90%","60%"])';
+	// -dyn-margin-left : '@selectFrom(["5%","20%"])';
+	box-sizing       : border-box;
+	margin: 0% 0%;
+	width: 80%;
+	margin: auto auto;
+
 }
 
 @pos               : '(@jq-position.top)';
@@ -98,19 +109,26 @@ body {
 
 
 .content__common-style() {
-	display          : block;
-	box-sizing       : border-box;
-	padding          : 3em;
-	text-align       : left;
-	color            : white;
-	border-radius    : .5em;
-	width            : 100%;
+	display       : block;
+	box-sizing    : border-box;
+	-dyn-padding  : '@selectFrom(["0em","3em"])';
+	text-align    : left;
+	color         : white;
+	border-radius : .5em;
+	width         : 100%;
 }
 
 .content__page1 {
-	.content__common-style();
-	-dyn-margin-top     : '(@win-height - @el-height)/2.0';
-	-dyn-margin-left    : '(@win-width - @el-width)/2.0';
+	box-sizing         : border-box;
+	// -dyn-padding    : '@selectFrom(["0em","3em"])';
+	text-align         : left;
+	color              : white;
+	border-radius      : .5em;
+	width              : 100%;
+	-dyn-margin-top    : '(@win-height - @el-height)/2.0';
+	-dyn-margin-bottom : '(@win-height - @el-height)/2.0';
+	-dyn-margin-left   : '(@win-width - @el-width)/2.0';
+
 	-dyn-opacity  		: '@convergeToZero({when : @{distance-from-top}, isHigherThan : @win-height/2})';
 }
 
@@ -118,8 +136,7 @@ body {
 .content__page3,
 .content__page4 {
 	.content__common-style();
-	-dyn-margin-top     : '(@win-height - @el-height)';
-	-dyn-margin-left    : '(@win-width - @el-width)/2.0';
+	-dyn-margin-bottom : '(@win-height - @el-height)';
 }
 
 .smallcaps (@color, @font-weight) {
@@ -135,7 +152,16 @@ body {
 
 .content__page2 {
 	background-color: fade(black, 30%);
-	width: 80%;
+	margin-left: 20%;
+	margin-right: 20%;
+	width: 60%;
+}
+
+.content__page2,
+.content__page3,
+.phone-preview {
+	-dyn-display                 : '@selectFrom(["none", "block"])';
+
 }
 
 // 	    ____                 __                       
@@ -152,17 +178,21 @@ body {
 }
 
 .page1__header {
-	text-align: center;
-	-dyn-font-size: '@selectFrom(["2em", "5em"])';
-	font-family: 'Francois One', 'Helvetica';
+	text-align     : center;
+	-dyn-font-size : '@selectFrom(["2em", "5em"])';
+	font-family    : 'Francois One', 'Helvetica';
+}
+
+.common__sub_properties() {
+	-dyn-font-size : '@selectFrom([".7em", "1.5em"])';
+	font-weight    : 300;
+	text-align     : center;
 }
 
 .page1__sub {	
 	.smallcaps(white, 300);
-	font-size   : 1.5em;
-	font-weight : 300;
-	letter-spacing: 6.5px;
-	text-align: center;
+	.common__sub_properties();
+	-dyn-letter-spacing : '@selectFrom(["3px", "6.5px"])';
 }
 
 // 	         __  __                                            
@@ -176,16 +206,14 @@ body {
 .page4__header {
 	text-align  : center;
 	padding-top : 1em;
-	font-size   : 3em;
+	-dyn-font-size : '@selectFrom(["1.2em", "3em"])';
 	font-weight : 500;
 }
 
 .page2__sub, 
 .page3__sub, 
 .page4__sub {
-	text-align  : center;
-	font-size   : 1.5em;
-	font-weight : 300;
+	.common__sub_properties();
 }
 
 // 	    _____             __   ____                   
@@ -199,24 +227,25 @@ body {
 @green: #3EAB3F;
 
 .page4__form {
-	display          : inline-block;
-	box-sizing       : border-box;
-	width: 70%;
-	margin-left: 15%;
-	margin-top: 2em;
+	box-sizing  : border-box;
+
+	-dyn-width       : '@selectFrom(["100%","70%"])';
+	-dyn-margin-left : '@selectFrom(["0%", "15%"])';
+
+	margin-top  : 2em;
 }
 
 @height: 100;
 
 .page4__form__email {
 
-	float       : left;
-	font-size   : 3em;
-	display     : inline-block;
-	box-sizing  : border-box;
-	border      : 3px solid white;
-	font-family : 'Lato';
-	width       : 70%;
+	float            : left;
+	font-size        : 3em;
+	box-sizing       : border-box;
+	border           : 3px solid white;
+	font-family      : 'Lato';
+	-dyn-width       : '@selectFrom(["100%","70%"])';
+	-dyn-margin-left : '@selectFrom(["0%", "5%"])';
 
 	&:focus {
 		border-left: 3px solid @blue;
@@ -226,14 +255,20 @@ body {
 
 .page4__form__button-go {
 
-	float            : right;
-	width            : 20%;
+	float            : left;
+	-dyn-width       : '@selectFrom(["100%","19%"])';
+	-dyn-margin-left : '@selectFrom(["0%", "1%"])';
 	height           : @height;
 	font-size        : 1.5em;
 	display          : block;
-	padding          : .8em;
+	padding-left     : .8em;
+	padding-right    : .8em;
+	margin-top       : 1px;
+	padding-top      : .8em;
+	padding-bottom   : .8em;
 	text-align       : center;
 	background       : @blue;
+	box-sizing       : border-box;
 	// border-radius : 3px;
 	color            : white;
 
@@ -316,7 +351,7 @@ body {
 .footer__createdby {
 	.smallcaps(black, 300);
 
-	font-size: 2em;
+	-dyn-font-size : '@selectFrom([".7em", "2em"])';
 	padding-bottom: .5em;
 }
 
