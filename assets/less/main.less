@@ -184,7 +184,7 @@ body {
 }
 
 .common__sub_properties() {
-	-dyn-font-size : '@selectFrom([".7em", "1.5em"])';
+	-dyn-font-size : '@selectFrom(["1em", "1.5em"])';
 	font-weight    : 300;
 	text-align     : center;
 }
@@ -237,18 +237,26 @@ body {
 
 @height: 100;
 
+.left-highlight(@color) {
+		border-right  : none;	
+		border-left   : 3px solid @color;
+		border-top    : none;
+		border-bottom : none;
+}
+
 .page4__form__email {
 
 	float            : left;
 	font-size        : 3em;
 	box-sizing       : border-box;
-	border           : 3px solid white;
+	.left-highlight(white);
+	border-radius    : 0px;
 	font-family      : 'Lato';
 	-dyn-width       : '@selectFrom(["100%","70%"])';
 	-dyn-margin-left : '@selectFrom(["0%", "5%"])';
 
 	&:focus {
-		border-left: 3px solid @blue;
+		.left-highlight(@blue);
 		outline: 0;
 	}
 }
@@ -259,13 +267,13 @@ body {
 	-dyn-width       : '@selectFrom(["100%","19%"])';
 	-dyn-margin-left : '@selectFrom(["0%", "1%"])';
 	height           : @height;
-	font-size        : 1.5em;
+	font-size        : 1.4em;
 	display          : block;
 	padding-left     : .8em;
 	padding-right    : .8em;
-	margin-top       : 1px;
-	padding-top      : .8em;
-	padding-bottom   : .8em;
+	margin-top       : 3px;
+	padding-top      : .7em;
+	padding-bottom   : .7em;
 	text-align       : center;
 	background       : @blue;
 	box-sizing       : border-box;
